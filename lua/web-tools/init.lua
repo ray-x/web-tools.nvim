@@ -9,6 +9,11 @@ _WEBTOOLS_CFG = {
   debug = false,
 }
 
+local function setup(cfg)
+  cfg = cfg or {}
+  _WEBTOOLS_CFG = vim.tbl_extend('force', _WEBTOOLS_CFG, cfg)
+end
+
 return {
   status = browser.status,
   run = browser.run,
@@ -18,4 +23,5 @@ return {
   open_url = open_browser.open_url,
   rename = rename.rename,
   repeat_rename = rename.repeat_rename,
+  setup = setup,
 }

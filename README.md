@@ -1,7 +1,7 @@
 # Liveview.nvim
 
-NEOVIM Wrapper for browser sync
-View your html/css files
+Neovim Wrapper for browser sync
+View your html/css files with a live server
 
 HTML & CSS tag rename, repeat rename action
 
@@ -16,14 +16,12 @@ npm install -g browser-sync
 ## Plug
 
 ```vim
-Plug 'ray-x/liveview.nvim'
+Plug 'ray-x/web-tools.nvim'
 ```
 
 ## Setup
 
 ```
-require'liveview'.setup({
-port = 3000
-})
+require'liveview'.setup()
 
 ```
