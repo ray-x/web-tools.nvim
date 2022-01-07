@@ -112,7 +112,7 @@ local run = function(...)
         return
       end
       log(job_id, data)
-      vim.notify(vim.inspect(data) .. 'from stderr', vim.lsp.log_levels.ERROR)
+      vim.notify(vim.inspect(data) .. ' from stderr', vim.lsp.log_levels.ERROR)
     end,
     on_exit = function(job_id, data, event)
       log(job_id, data)
