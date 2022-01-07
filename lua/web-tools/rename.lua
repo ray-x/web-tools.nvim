@@ -25,14 +25,18 @@ end
 M.repeat_rename = function(input)
   local dot = vim.fn.getreg('.')
   log(dot)
-  if dot ~= M.dot then
-    M.newrename = nil
-    M.dot = nil
+  if dot ~= '' and dot ~= M.dot then
+    M.newname = nil
     log(M, 'exec normal')
-    return vim.cmd([[execute "normal! ."]])
+    vim.cmd([[execute "normal! ."]])
+    M.dot = vim.fn.getreg('.')
+    return
   end
   if vim.fn.empty(input) == 1 then
     log(M)
+    if vim.fn.empty(M.newname) == 1 then
+      return
+    end
     input = M.newname
   end
   M.rename(input)
@@ -44,6 +48,8 @@ function M.rename(new_name)
     prompt = 'rename tag: ',
   }
 
+  print(vim.inspect(new_name))
+
   ---@private
   local function on_confirm(input)
     if not (input and #input > 0) then
@@ -52,8 +58,8 @@ function M.rename(new_name)
     local params = util.make_position_params()
     params.newName = input
     M.newname = input
+    M.dot = vim.fn.getreg('.')
     request('textDocument/rename', params)
-    M.dot = params.newName
   end
 
   ---@private

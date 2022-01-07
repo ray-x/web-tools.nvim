@@ -21,7 +21,22 @@ Plug 'ray-x/web-tools.nvim'
 
 ## Setup
 
-```
-require'liveview'.setup()
+```lua
+require'liveview'.setup({
+  keymaps = {
+    rename = '',  -- by default use same setup of lspconfig
+    repeat_rename = '.', -- . to repeat
+  },
+})
 
 ```
+
+## Commands
+
+| command        | Description                            |
+| -------------- | -------------------------------------- |
+| BrowserSync    | run browser-sync server                |
+| BrowserPreview | preview current file with browser sync |
+| BrowserRestart | restart browser sync                   |
+| Browserstop    | stop browser sync                      |
+| TagRename      | rename html tag                        |
