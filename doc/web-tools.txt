@@ -3,7 +3,7 @@ web-tools.txt
 ================================================================================
 CONTENTS                                                      *web-tools-contents*
 
-1. Liveview.nvim.........................................|web-tools-liveview.nvim|
+1. web-tools.nvim.......................................|web-tools-web-tools.nvim|
     1.1. Install...............................................|web-tools-install|
         1.1.1. Install browser sync...............|web-tools-install_browser_sync|
         1.1.2. LSP for html & cssls...............|web-tools-lsp_for_html_&_cssls|
@@ -12,7 +12,7 @@ CONTENTS                                                      *web-tools-content
     1.3. Commands.............................................|web-tools-commands|
 
 ================================================================================
-LIVEVIEW.NVIM                                            *web-tools-liveview.nvim*
+WEB-TOOLS.NVIM                                          *web-tools-web-tools.nvim*
 
 Neovim Wrapper for browser-sync (https://github.com/BrowserSync/browser-sync) and LSP.
 View your html/css files with a live server

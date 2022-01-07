@@ -1,4 +1,4 @@
-# Liveview.nvim
+# web-tools.nvim
 
 Neovim Wrapper for [browser-sync](https://github.com/BrowserSync/browser-sync) and LSP.
 View your html/css files with a live server
