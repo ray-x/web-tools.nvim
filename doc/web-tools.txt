@@ -1,0 +1,55 @@
+web0tools.txt
+
+================================================================================
+CONTENTS                                                      *web0tools-contents*
+
+1. Liveview.nvim.........................................|web0tools-liveview.nvim|
+    1.1. Install...............................................|web0tools-install|
+    1.2. Plug.....................................................|web0tools-plug|
+    1.3. Setup...................................................|web0tools-setup|
+    1.4. Commands.............................................|web0tools-commands|
+
+================================================================================
+LIVEVIEW.NVIM                                            *web0tools-liveview.nvim*
+
+Neovim Wrapper for browser sync
+View your html/css files with a live server
+
+HTML & CSS tag rename, repeat rename action
+
+--------------------------------------------------------------------------------
+INSTALL                                                        *web0tools-install*
+
+Install browser sync
+>
+    npm install -g browser-sync
+<
+
+--------------------------------------------------------------------------------
+PLUG                                                              *web0tools-plug*
+>
+    Plug 'ray-x/web-tools.nvim'
+<
+
+--------------------------------------------------------------------------------
+SETUP                                                            *web0tools-setup*
+>
+    require'liveview'.setup({
+      keymaps = {
+        rename = '',  -- by default use same setup of lspconfig
+        repeat_rename = '.', -- . to repeat
+      },
+    })
+<
+
+--------------------------------------------------------------------------------
+COMMANDS                                                      *web0tools-commands*
+
+| command        | Description                            |
+| -------------- | -------------------------------------- |
+| BrowserSync    | run browser-sync server                |
+| BrowserPreview | preview current file with browser sync |
+| BrowserRestart | restart browser sync                   |
+| Browserstop    | stop browser sync                      |
+| TagRename      | rename html tag                        |
+
