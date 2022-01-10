@@ -9,8 +9,6 @@ local util = require('vim.lsp.util')
 -- local util = require('navigator.util')
 -- local rename_prompt = 'Rename -> '
 
-local has_guihua, floating = pcall(require, 'guihua.floating')
-
 M.newname = nil
 M.dot = nil
 
@@ -24,8 +22,8 @@ end
 
 M.repeat_rename = function(input)
   local dot = vim.fn.getreg('.')
-  log(dot)
-  if dot ~= '' and dot ~= M.dot then
+  log(dot, M)
+  if dot ~= '' and dot ~= M.dot and dot ~= M.newname then
     M.newname = nil
     log(M, 'exec normal')
     vim.cmd([[execute "normal! ."]])
@@ -33,7 +31,6 @@ M.repeat_rename = function(input)
     return
   end
   if vim.fn.empty(input) == 1 then
-    log(M)
     if vim.fn.empty(M.newname) == 1 then
       return
     end
@@ -53,20 +50,25 @@ function M.rename(new_name)
   ---@private
   local function on_confirm(input)
     if not (input and #input > 0) then
+      log('invalid input')
       return
     end
     local params = util.make_position_params()
     params.newName = input
     M.newname = input
     M.dot = vim.fn.getreg('.')
+    log(M)
     request('textDocument/rename', params)
   end
 
   ---@private
   local function prepare_rename(err, result)
     local input_fun = vim.ui.input
+
+    local has_guihua, floating = pcall(require, 'guihua.floating')
     if has_guihua then
-      vim.ui.input = floating.input
+      log('gui override')
+      input_fun = floating.input
     end
     if err == nil and result == nil then
       vim.notify('nothing to rename', vim.log.levels.INFO)
@@ -94,13 +96,12 @@ function M.rename(new_name)
       -- see https://microsoft.github.io/language-server-protocol/specification#textDocument_prepareRename
       opts.default = vfn.expand('<cword>')
       if not new_name then
-        pcall(vim.ui.input, opts, on_confirm)
+        pcall(input_fun, opts, on_confirm)
       end
     end
     if new_name then
       on_confirm(new_name)
     end
-    vim.ui.input = input_fun
   end
   request('textDocument/prepareRename', util.make_position_params(), prepare_rename)
 end

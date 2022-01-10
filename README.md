@@ -51,4 +51,4 @@ require'liveview'.setup({
 | BrowserPreview | preview current file with browser sync |
 | BrowserRestart | restart browser sync                   |
 | Browserstop    | stop browser sync                      |
-| TagRename      | rename html tag                        |
+| TagRename {newname}     | rename html tag                        |

@@ -6,7 +6,7 @@ vim = vim or nil
 _WEBTOOLS_CFG = {
   debug = false,
   keymaps = {
-    rename = '',
+    rename = nil,
     repeat_rename = '.',
   },
 }
@@ -20,7 +20,7 @@ local function setup(cfg)
   vim.cmd([[command! BrowserStop lua require"web-tools".stop()]])
   vim.cmd([[command! BrowserOpen lua require"web-tools".open()]])
   vim.cmd([[command! -nargs=* TagRename lua require"web-tools".rename(<f-args>)]])
-  local repeat_key = _WEBTOOLS_CFG.keymaps.repeat_rename or '.'
+  local repeat_key = _WEBTOOLS_CFG.keymaps.repeat_rename
   if vim.fn.empty(repeat_key) == 0 then
     vim.api.nvim_set_keymap(
       'n',
@@ -31,7 +31,7 @@ local function setup(cfg)
   end
 
   local rename_key = _WEBTOOLS_CFG.keymaps.rename
-  if vim.fn.empty(repeat_key) == 0 then
+  if vim.fn.empty(rename_key) == 0 then
     vim.api.nvim_set_keymap(
       'n',
       rename_key,
