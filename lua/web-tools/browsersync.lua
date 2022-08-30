@@ -65,6 +65,12 @@ local run = function(...)
     vim.o.shell,
     vim.o.shellcmdflag,
   }
+  if vim.fn.executable('browser-sync') == 0 then
+    return vim.notify(
+      'browser-sync not found please install with npm install -g browser-sync',
+      vim.lsp.log_levels.ERROR
+    )
+  end
   local opts = { 'browser-sync', 'start', '--server', '--watch', '--no-open' }
 
   if running() then

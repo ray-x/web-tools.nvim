@@ -1,6 +1,6 @@
 # web-tools.nvim
 
-Neovim Wrapper for [browser-sync](https://github.com/BrowserSync/browser-sync) and LSP.
+Neovim Wrapper for ❤️ [browser-sync](https://github.com/BrowserSync/browser-sync) and http LSP.
 View your html/css files with a live server
 
 HTML & CSS tag rename, repeat rename action
@@ -8,7 +8,7 @@ HTML & CSS tag rename, repeat rename action
 ## Install
 
 - require
-  - neovim 0.5+
+  - neovim 0.7+
   - browser-sync
   - lspconfig & vscode-langservers-extracted
 
@@ -16,6 +16,7 @@ HTML & CSS tag rename, repeat rename action
 
 ```
 npm install -g browser-sync
+
 ```
 
 ### LSP for html & cssls
@@ -29,12 +30,13 @@ npm i -g vscode-langservers-extracted
 
 ```vim
 Plug 'ray-x/web-tools.nvim'
+
 ```
 
 ## Setup
 
 ```lua
-require'liveview'.setup({
+require'web-tools'.setup({
   keymaps = {
     rename = '',  -- by default use same setup of lspconfig
     repeat_rename = '.', -- . to repeat
