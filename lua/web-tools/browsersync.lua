@@ -7,6 +7,7 @@ _WEBTOOLS = {}
 local job
 local port
 local info = ''
+local M = {}
 
 --[[ [Browsersync] Access URLs:
  --------------------------------------
@@ -23,34 +24,50 @@ _LIVEVIEW_CFG = {
   debug = false,
 }
 
-local running = function()
-  if job == nil then
+M.running = function()
+  if not job then
     return false
   end
   log(job, vim.fn.jobwait({ job }, 0))
   return vim.fn.jobwait({ job }, 0)[1] == -1
 end
-local status = function()
-  if running() then
+
+M.status = function()
+  if M.running() then
     return '鷺 ' .. tostring(_LIVEVIEW_CFG.port or port or 3000)
   end
 end
-local stop = function()
-  if running() then
-    vim.fn.jobstop(job)
+
+M.stop = function()
+  if M.running() then
+    log('stop ', job)
+    if job then
+      vim.fn.jobstop(job)
+    end
     job = nil
     port = nil
   end
 end
 
-local function open_browser(url)
+M.open_browser = function(url)
   require('web-tools.openbrowser').open(url)
 end
 
-local open = function(path, _port)
+M.open = function(path, _port)
+  if not M.running() then
+    vim.defer_fn(function()
+      M.run({
+        callback = function()
+          M.open(path, _port)
+        end,
+      })
+    end, 1)
+    vim.notify('waiting for browser sync to start')
+    return
+  end
   _port = _port or port
   path = path or '/'
-  if not running() then
+  if not M.running() then
     vim.notify('server not started', vim.lsp.log_levels.ERROR)
   end
   local slash = '/'
@@ -58,10 +75,10 @@ local open = function(path, _port)
     slash = ''
   end
   local url = 'http://localhost:' .. tostring(_port) .. slash .. path
-  open_browser(url)
+  M.open_browser(url)
 end
 
-local run = function(...)
+M.run = function(...)
   local cmd = {
     vim.o.shell,
     vim.o.shellcmdflag,
@@ -74,10 +91,11 @@ local run = function(...)
   end
   local opts = { 'browser-sync', 'start', '--server', '--watch', '--no-open' }
 
-  if running() then
-    stop()
+  if M.running() then
+    M.stop()
   end
   local args = { ... }
+  local callback = function() end
   if args then
     for i = 1, #args do
       if args[i] == '--files' then
@@ -85,6 +103,11 @@ local run = function(...)
           -- wrap next arg with ""
           args[i + 1] = [["]] .. args[i + 1] .. [["]]
         end
+      end
+
+      if args[i].callback then
+        callback = args[i].callback
+        args[i] = ''
       end
     end
     vim.list_extend(opts, args)
@@ -102,16 +125,27 @@ local run = function(...)
       if not data then
         return
       end
+      local last = false
       if type(data) == 'table' then
         for _, line in pairs(data) do
           info = info .. line .. '\n'
           if string.find(line, 'Local') then
             port = vim.fn.matchstr(line, [[\v:\zs\d+$$]])
           end
+          if line:find('Watching') then
+            last = true
+          end
         end
       end
       utils.log('port:', port)
-      vim.notify(info, vim.lsp.log_levels.DEBUG)
+      utils.log(info)
+
+      if last then
+        vim.defer_fn(function()
+          print('callback')
+          callback()
+        end, 50)
+      end
     end,
     on_stderr = function(job_id, data, event)
       data = utils.handle_job_data(data)
@@ -122,8 +156,11 @@ local run = function(...)
       vim.notify(vim.inspect(data) .. ' from stderr', vim.lsp.log_levels.ERROR)
     end,
     on_exit = function(job_id, data, event)
-      log(job_id, data)
+      log('exit', job_id, data)
       vim.notify(vim.inspect(data), vim.lsp.log_levels.INFO)
+
+      vim.fn.chanclose(job, 'stderr')
+      vim.fn.chanclose(job, 'stdout')
     end,
     cwd = vim.fn.getcwd(),
     -- stdout_buffered = true,
@@ -134,42 +171,25 @@ local run = function(...)
   end
   log('job id', job)
   vim.fn.chanclose(job, 'stdin')
-
-  -- if vim.o.ft == 'html' then
-  --   vim.defer_fn(function()
-  --     if job ~= nil and port ~= nil then
-  --       local filename = vfn.fnamemodify(vfn.expand('%'), ':~:.')
-  --       open(filename)
-  --     end
-  --   end, 1000)
-  -- end
-
-  -- vim.fn.chanclose(job, 'stderr')
-  -- vim.fn.chanclose(job, 'stdout')
 end
 
-local function restart()
-  stop()
-  run()
+M.restart = function()
+  M.stop()
+  M.run()
 end
 
 local function preview_file()
   local delay = 500
-  if not running() then
-    run()
-    delay = 1000
-  end
-  vim.defer_fn(function()
-    local filename = vfn.fnamemodify(vfn.expand('%'), ':~:.')
-    open(filename)
-  end, delay)
-end
 
-return {
-  status = status,
-  run = run,
-  open = open,
-  restart = restart,
-  preview = preview_file,
-  stop = stop,
-}
+  local filename = vfn.fnamemodify(vfn.expand('%'), ':~:.')
+  if not M.running() then
+    M.run({
+      callback = function()
+        M.open(filename)
+      end,
+    })
+  else
+    M.open(filename)
+  end
+end
+return M

@@ -1,7 +1,7 @@
 # web-tools.nvim
 
 Neovim Wrapper for ❤️ [browser-sync](https://github.com/BrowserSync/browser-sync) and http/ccs LSP.
-View your html/css files with a live server
+View your html/css files with a live web server locally
 
 HTML & CSS tag rename, repeat rename action
 
@@ -10,7 +10,7 @@ HTML & CSS tag rename, repeat rename action
 - require
   - neovim 0.7+
   - browser-sync
-  - lspconfig & vscode-langservers-extracted
+  - optional: lspconfig & vscode-langservers-extracted
 
 ### Install browser sync
 
@@ -50,6 +50,7 @@ require'web-tools'.setup({
 | command        | Description                            |
 | -------------- | -------------------------------------- |
 | BrowserSync    | run browser-sync server                |
+| BrowserOpen    | preview current file, if browser-sync is not start, start it |
 | BrowserPreview | preview current file with browser sync |
 | BrowserRestart | restart browser sync                   |
 | Browserstop    | stop browser sync                      |
