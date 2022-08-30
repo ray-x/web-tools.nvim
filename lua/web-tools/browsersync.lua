@@ -49,11 +49,12 @@ end
 
 local open = function(path, _port)
   _port = _port or port
+  path = path or '/'
   if not running() then
     vim.notify('server not started', vim.lsp.log_levels.ERROR)
   end
   local slash = '/'
-  if path == nil then
+  if path == '/' then
     slash = ''
   end
   local url = 'http://localhost:' .. tostring(_port) .. slash .. path
@@ -110,7 +111,7 @@ local run = function(...)
         end
       end
       utils.log('port:', port)
-      -- vim.notify(info, vim.lsp.log_levels.DEBUG)
+      vim.notify(info, vim.lsp.log_levels.DEBUG)
     end,
     on_stderr = function(job_id, data, event)
       data = utils.handle_job_data(data)
@@ -122,7 +123,7 @@ local run = function(...)
     end,
     on_exit = function(job_id, data, event)
       log(job_id, data)
-      vim.notify(vim.inspect(data), vim.lsp.log_levels.DEBUG)
+      vim.notify(vim.inspect(data), vim.lsp.log_levels.INFO)
     end,
     cwd = vim.fn.getcwd(),
     -- stdout_buffered = true,

@@ -1,6 +1,6 @@
 # web-tools.nvim
 
-Neovim Wrapper for ❤️ [browser-sync](https://github.com/BrowserSync/browser-sync) and http LSP.
+Neovim Wrapper for ❤️ [browser-sync](https://github.com/BrowserSync/browser-sync) and http/ccs LSP.
 View your html/css files with a live server
 
 HTML & CSS tag rename, repeat rename action
