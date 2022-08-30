@@ -5,6 +5,8 @@ View your html/css files with a live web server locally
 
 HTML & CSS tag rename, repeat rename action
 
+[![live web server](https://user-images.githubusercontent.com/1681295/187394713-57deae33-4c17-45f0-a41f-5f7a2e75ace7.jpg](https://user-images.githubusercontent.com/1681295/187393112-9eafb5ee-44f3-4ff2-829e-b37841b146c9.mp4 "web tools")
+
 ## Install
 
 - require
