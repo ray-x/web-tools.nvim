@@ -40,7 +40,7 @@ Plug 'ray-x/web-tools.nvim'
 ```lua
 require'web-tools'.setup({
   keymaps = {
-    rename = '',  -- by default use same setup of lspconfig
+    rename = nil,  -- by default use same setup of lspconfig
     repeat_rename = '.', -- . to repeat
   },
 })

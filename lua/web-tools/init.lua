@@ -1,8 +1,3 @@
-local utils = require('web-tools.utils')
-local browser = require('web-tools.browsersync')
-local rename = require('web-tools.rename')
-local open_browser = require('web-tools.openbrowser')
-
 vim = vim or {}
 _WEBTOOLS_CFG = {
   debug = false,
@@ -11,6 +6,21 @@ _WEBTOOLS_CFG = {
     repeat_rename = '.',
   },
 }
+
+local browser = require('web-tools.browsersync')
+local rename = require('web-tools.rename')
+local open_browser = require('web-tools.openbrowser')
+
+-- TODO: to be improved
+function _G.__dot_repeat_rename(motion)
+  if motion == nil then
+    vim.o.operatorfunc = 'v:lua.__dot_repeat_'
+    return 'g@'
+  end
+
+  -- print('counter:', counter, 'motion:', motion)
+  -- counter = counter + 1
+end
 
 local create_cmd = function(cmd, func, opt)
   opt = vim.tbl_extend('force', { desc = 'web-tools ' .. cmd }, opt or {})
@@ -32,22 +42,16 @@ local function setup(cfg)
 
   local repeat_key = _WEBTOOLS_CFG.keymaps.repeat_rename
   if vim.fn.empty(repeat_key) == 0 then
-    vim.api.nvim_set_keymap(
-      'n',
-      repeat_key,
-      [[<cmd>lua require('web-tools').repeat_rename()<CR>]],
-      { silent = true, noremap = true }
-    )
+    vim.keymap.set('n', repeat_key, function()
+      require('web-tools').repeat_rename()
+    end, { silent = true, noremap = true, desc = 'webtool renmae' })
   end
 
   local rename_key = _WEBTOOLS_CFG.keymaps.rename
   if vim.fn.empty(rename_key) == 0 then
-    vim.api.nvim_set_keymap(
-      'n',
-      rename_key,
-      [[<cmd>lua require('web-tools').rename()<CR>]],
-      { silent = true, noremap = true }
-    )
+    vim.keymap.set('n', rename_key, function()
+      require('web-tools').rename()
+    end, { silent = true, noremap = true, desc = 'repeat rename' })
   end
 end
 

@@ -2,7 +2,6 @@ local utils = require('web-tools.utils')
 vim = vim or nil
 local vfn = vim.fn
 local log = utils.log
-_WEBTOOLS = {}
 
 local job
 local port
@@ -20,9 +19,7 @@ local M = {}
 [Browsersync] Serving files from: ./
 [Browsersync] Watching files... ]]
 
-_LIVEVIEW_CFG = {
-  debug = false,
-}
+_WEBTOOLS_CFG = _WEBTOOLS_CFG or { debug = false }
 
 M.running = function()
   if not job then
