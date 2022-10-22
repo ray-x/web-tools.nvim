@@ -25,12 +25,13 @@ util.handle_job_data = function(data)
 end
 
 util.log = function(...)
+  if not _WEBTOOLS_CFG.debug then
+    return
+  end
   if lprint ~= nil then
     return lprint(...)
   end
-  if _WEBTOOLS_CFG.debug then
-    print(...)
-  end
+  print(...)
 end
 util.log('ss')
 return util
