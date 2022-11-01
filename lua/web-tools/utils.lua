@@ -10,6 +10,14 @@ function util.sep()
   return '/'
 end
 
+function util.os()
+  return os_name
+end
+
+function util.is_windows()
+  return return is_windows
+end
+
 util.handle_job_data = function(data)
   if not data then
     return nil
@@ -33,5 +41,5 @@ util.log = function(...)
   end
   print(...)
 end
-util.log('ss')
+
 return util

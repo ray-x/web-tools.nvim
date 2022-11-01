@@ -13,6 +13,7 @@ local winrestview = vfn.winrestview
 local getline = vfn.getline
 local line = vfn.line
 local col = vfn.col
+local util = require('web-tools.utils')
 local log = function(...)
   print(vim.inspect(...))
 end
@@ -48,6 +49,9 @@ local function open_url(url)
   end
   if url then
     cmd = cmd .. ' "' .. vfn.escape(url, '#%!') .. '"'
+    if util.is_windows() then
+      cmd = cmd .. ' ' .. vfn.escape(url, '#%!')
+    end
     log(cmd)
     vim.cmd(cmd)
     return
