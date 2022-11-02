@@ -24,8 +24,12 @@ end
 
 local function open_cmd()
   local cmd = ':sclient !open'
-  if exists('$WSLENV') ~= 0 then
-    vim.cmd('lcd /mnt/c')
+  if vim.fn.has('wsl') == 1 then
+    vim.cmd('lcd /mnt/c') -- note: this indicates WSL is running, does not mean you are in WSL
+    cmd = ':silent !cmd.exe /C start'
+  elseif exists('$WSLENV') ~= 0 then
+    vim.notify('please use a WSL terminal to run neovim')
+    vim.cmd('lcd /mnt/c') -- note: this indicates WSL is running, does not mean you are in WSL
     cmd = ':silent !cmd.exe /C start'
   elseif has('win32') ~= 0 or has('win32unix') ~= 0 then
     cmd = ':silent !start'
@@ -34,7 +38,7 @@ local function open_cmd()
   elseif executable('open') == 1 then
     cmd = ':silent !open'
   else
-    vim.notify(' platform not supported ', vim.lsp.log_levels.ERROR)
+    vim.notify(' platform not supported: ' .. util.os, vim.lsp.log_levels.ERROR)
   end
   return cmd
 end

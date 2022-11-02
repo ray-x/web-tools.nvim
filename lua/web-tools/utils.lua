@@ -15,7 +15,7 @@ function util.os()
 end
 
 function util.is_windows()
-  return return is_windows
+  return is_windows
 end
 
 util.handle_job_data = function(data)
