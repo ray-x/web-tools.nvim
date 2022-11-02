@@ -27,10 +27,6 @@ local function open_cmd()
   if vim.fn.has('wsl') == 1 then
     vim.cmd('lcd /mnt/c') -- note: this indicates WSL is running, does not mean you are in WSL
     cmd = ':silent !cmd.exe /C start'
-  elseif exists('$WSLENV') ~= 0 then
-    vim.notify('please use a WSL terminal to run neovim')
-    vim.cmd('lcd /mnt/c') -- note: this indicates WSL is running, does not mean you are in WSL
-    cmd = ':silent !cmd.exe /C start'
   elseif has('win32') ~= 0 or has('win32unix') ~= 0 then
     cmd = ':silent !start'
   elseif executable('xdg-open') == 1 then
@@ -52,9 +48,10 @@ local function open_url(url)
     url = 'http://' .. url
   end
   if url then
-    cmd = cmd .. ' "' .. vfn.escape(url, '#%!') .. '"'
     if util.is_windows() then
       cmd = cmd .. ' ' .. vfn.escape(url, '#%!')
+    else
+      cmd = cmd .. ' "' .. vfn.escape(url, '#%!') .. '"'
     end
     log(cmd)
     vim.cmd(cmd)
