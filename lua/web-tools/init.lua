@@ -5,6 +5,7 @@ _WEBTOOLS_CFG = {
     rename = nil,
     repeat_rename = '.',
   },
+  port = nil,
 }
 
 local browser = require('web-tools.browsersync')
@@ -32,12 +33,14 @@ local function setup(cfg)
   _WEBTOOLS_CFG = vim.tbl_extend('force', _WEBTOOLS_CFG, cfg)
 
   -- stylua: ignore start
-  create_cmd( 'BrowserSync', function() require"web-tools".run() end)
+  create_cmd( 'BrowserSync', function(opts) require"web-tools".run(opts.args) end, { nargs = '*' })
   create_cmd( 'BrowserPreview', function() require"web-tools".preview() end)
-  create_cmd( 'BrowserRestart', function() require"web-tools".restart() end)
+  create_cmd( 'BrowserRestart', function(opts) require"web-tools".restart(opts.args) end, { nargs = '*' })
   create_cmd( 'BrowserStop', function() require"web-tools".stop() end)
-  create_cmd( 'BrowserOpen', function() require"web-tools".open() end)
-  create_cmd( 'TagRename', function(opts) require"web-tools".rename(unpack(opts.fargs)) end, { nargs = '*' })
+  create_cmd( 'BrowserOpen', function(opts)
+    args = opts.args
+    require"web-tools".open(args) end, { nargs = '*' })
+  create_cmd( 'TagRename', function(opts) require"web-tools".rename(opts) end, { nargs = '*' })
   -- stylua: ignore end
 
   local repeat_key = _WEBTOOLS_CFG.keymaps.repeat_rename

@@ -51,9 +51,12 @@ require'web-tools'.setup({
 
 | command        | Description                            |
 | -------------- | -------------------------------------- |
-| BrowserSync    | run browser-sync server                |
-| BrowserOpen    | preview current file, if browser-sync is not start, start it |
+| BrowserSync {args}    | run browser-sync server with args               |
+| BrowserOpen {args}   | preview current file, if browser-sync is not start, start it with args|
 | BrowserPreview | preview current file with browser sync |
 | BrowserRestart | restart browser sync                   |
 | Browserstop    | stop browser sync                      |
 | TagRename {newname}     | rename html tag                        |
+
+Note:
+{args} is optional, if not provided, check [browser-sync](https://browsersync.io/docs/command-line) for all args options

@@ -31,7 +31,7 @@ end
 
 M.status = function()
   if M.running() then
-    return '鷺 ' .. tostring(_LIVEVIEW_CFG.port or port or 3000)
+    return '鷺 ' .. tostring(port or _WEBTOOLs_CFG.port)
   end
 end
 
@@ -50,20 +50,21 @@ M.open_browser = function(url)
   require('web-tools.openbrowser').open(url)
 end
 
-M.open = function(path, _port)
+M.open = function(...)
+  args = { ... }
+  args.callback = function()
+    M.open(args)
+  end
+
   if not M.running() then
     vim.defer_fn(function()
-      M.run({
-        callback = function()
-          M.open(path, _port)
-        end,
-      })
+      M.run(args)
     end, 1)
     vim.notify('waiting for browser sync to start')
     return
   end
-  _port = _port or port
-  path = path or '/'
+  local _port = port
+  local path = '/'
   if not M.running() then
     vim.notify('server not started', vim.lsp.log_levels.ERROR)
   end
@@ -75,7 +76,7 @@ M.open = function(path, _port)
   M.open_browser(url)
 end
 
-M.run = function(...)
+M.run = function(args)
   local cmd = {
     vim.o.shell,
     vim.o.shellcmdflag,
@@ -91,23 +92,24 @@ M.run = function(...)
   if M.running() then
     M.stop()
   end
-  local args = { ... }
-  local callback = function() end
+  local callback = function()
+    log('default callback')
+  end
+
+  if args.callback then
+    callback = args.callback
+  end
   if args then
     for i = 1, #args do
+      log(args[i])
       if args[i] == '--files' then
         if args[i + 1] ~= nil then
           -- wrap next arg with ""
           args[i + 1] = [["]] .. args[i + 1] .. [["]]
         end
       end
-
-      if args[i].callback then
-        callback = args[i].callback
-        args[i] = ''
-      end
+      table.insert(opts, args[i])
     end
-    vim.list_extend(opts, args)
   end
 
   opts = table.concat(opts, ' ')
@@ -139,7 +141,7 @@ M.run = function(...)
 
       if last then
         vim.defer_fn(function()
-          print('callback')
+          log('callback')
           callback()
         end, 50)
       end
@@ -170,9 +172,9 @@ M.run = function(...)
   vim.fn.chanclose(job, 'stdin')
 end
 
-M.restart = function()
+M.restart = function(args)
   M.stop()
-  M.run()
+  M.run(args)
 end
 
 local function preview_file()
