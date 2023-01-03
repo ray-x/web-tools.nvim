@@ -34,7 +34,7 @@ local function setup(cfg)
 
   -- stylua: ignore start
   create_cmd( 'BrowserSync', function(opts) require"web-tools".run(opts.args) end, { nargs = '*' })
-  create_cmd( 'BrowserPreview', function() require"web-tools".preview() end)
+  create_cmd( 'BrowserPreview', function(opts) require"web-tools".preview(opts.args) end, { nargs = '*' })
   create_cmd( 'BrowserRestart', function(opts) require"web-tools".restart(opts.args) end, { nargs = '*' })
   create_cmd( 'BrowserStop', function() require"web-tools".stop() end)
   create_cmd( 'BrowserOpen', function(opts)

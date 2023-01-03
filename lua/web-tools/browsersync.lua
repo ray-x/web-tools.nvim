@@ -51,8 +51,8 @@ M.open_browser = function(url)
 end
 
 M.open = function(...)
-  args = { ... }
-  args.callback = function()
+  local args = { ... }
+  args.callback = args.callback or function()
     M.open(args)
   end
 
@@ -63,9 +63,9 @@ M.open = function(...)
     vim.notify('waiting for browser sync to start')
     return
   end
-  local _port = port
+  local _port = args[2] or port
   local path = '/'
-  if args[1] and type(args[1]) == 'string' and vim.fn.exists(args[1]) then
+  if (args[1] and type(args[1]) == 'string') and (args[1] == '/' or vim.fn.exists(args[1])) then
     path = args[1]
   end
   if not M.running() then
@@ -180,18 +180,21 @@ M.restart = function(args)
   M.run(args)
 end
 
-M.preview_file = function()
+M.preview_file = function(args)
   local delay = 500
 
   local filename = vfn.fnamemodify(vfn.expand('%'), ':~:.')
+  if args and args[1] == '--port' then
+    port = args[2]
+  end
   if not M.running() then
-    M.run({
-      callback = function()
-        M.open(filename)
-      end,
-    })
+    args = args or {}
+    args.callback = function()
+      M.open(filename, port)
+    end
+    M.run(args)
   else
-    M.open(filename)
+    M.open(filename, port)
   end
 end
 return M
