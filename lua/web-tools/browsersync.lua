@@ -50,12 +50,11 @@ M.open_browser = function(url)
   require('web-tools.openbrowser').open(url)
 end
 
-M.open = function(...)
-  local args = { ... }
+M.open = function(args)
+  log(args)
   args.callback = args.callback or function()
     M.open(args)
   end
-
   if not M.running() then
     vim.defer_fn(function()
       M.run(args)
@@ -65,7 +64,7 @@ M.open = function(...)
   end
   local _port = args[2] or port
   local path = '/'
-  if (args[1] and type(args[1]) == 'string') and (args[1] == '/' or vim.fn.exists(args[1])) then
+  if (args[1] and type(args[1]) == 'string') and (args[1] == '/' or vim.fn.exists(args[1])) == 1 then
     path = args[1]
   end
   if not M.running() then
@@ -111,17 +110,19 @@ M.run = function(args)
           args[i + 1] = [["]] .. args[i + 1] .. [["]]
         end
       end
-      table.insert(opts, args[i])
+      if type(args[i]) == 'string' then
+        table.insert(opts, args[i])
+      end
     end
   end
 
   opts = table.concat(opts, ' ')
   table.insert(cmd, opts)
 
-  log('fmt cmd:', cmd, opts)
+  log('fmt cmd:', args, cmd, opts)
   job = vim.fn.jobstart(cmd, {
     on_stdout = function(job_id, data, event)
-      log(job_id, data)
+      log(job_id, data, event)
       -- print('job started', job_id)
       data = utils.handle_job_data(data)
       if not data then
@@ -154,19 +155,17 @@ M.run = function(args)
       if not data then
         return
       end
-      log(job_id, data)
+      log(job_id, data, event)
       vim.notify(vim.inspect(data) .. ' from stderr', vim.lsp.log_levels.ERROR)
     end,
     on_exit = function(job_id, data, event)
-      log('exit', job_id, data)
+      log('exit', job_id, data, event)
       vim.notify(vim.inspect(data), vim.lsp.log_levels.INFO)
 
       vim.fn.chanclose(job, 'stderr')
       vim.fn.chanclose(job, 'stdout')
     end,
     cwd = vim.fn.getcwd(),
-    -- stdout_buffered = true,
-    -- stderr_buffered = true,
   })
   if job == 0 then
     log('job create failure', job)
@@ -181,8 +180,6 @@ M.restart = function(args)
 end
 
 M.preview_file = function(args)
-  local delay = 500
-
   local filename = vfn.fnamemodify(vfn.expand('%'), ':~:.')
   if args and args[1] == '--port' then
     port = args[2]
@@ -190,11 +187,11 @@ M.preview_file = function(args)
   if not M.running() then
     args = args or {}
     args.callback = function()
-      M.open(filename, port)
+      M.open({ filename, port })
     end
     M.run(args)
   else
-    M.open(filename, port)
+    M.open({ filename, port })
   end
 end
 return M

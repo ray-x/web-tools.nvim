@@ -34,12 +34,12 @@ local function setup(cfg)
 
   -- stylua: ignore start
   create_cmd( 'BrowserSync', function(opts) require"web-tools".run(opts.args) end, { nargs = '*' })
-  create_cmd( 'BrowserPreview', function(opts) require"web-tools".preview(opts.args) end, { nargs = '*' })
-  create_cmd( 'BrowserRestart', function(opts) require"web-tools".restart(opts.args) end, { nargs = '*' })
+  create_cmd( 'BrowserPreview', function(opts) 
+    require"web-tools".preview(opts.fargs) end, { nargs = '*' })
+  create_cmd( 'BrowserRestart', function(opts) require"web-tools".restart(opts.fargs) end, { nargs = '*' })
   create_cmd( 'BrowserStop', function() require"web-tools".stop() end)
   create_cmd( 'BrowserOpen', function(opts)
-    args = opts.args
-    require"web-tools".open(args) end, { nargs = '*' })
+    require"web-tools".open(opts.fargs) end, { nargs = '*' })
   create_cmd( 'TagRename', function(opts) require"web-tools".rename(opts) end, { nargs = '*' })
   -- stylua: ignore end
 
