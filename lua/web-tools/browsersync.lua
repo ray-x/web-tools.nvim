@@ -64,7 +64,7 @@ M.open = function(args)
   end
   local _port = args[2] or port
   local path = '/'
-  if (args[1] and type(args[1]) == 'string') and (args[1] == '/' or vim.fn.exists(args[1])) == 1 then
+  if (args[1] and type(args[1]) == 'string') and (args[1] == '/' or vim.fn.filereadable(args[1])) == 1 then
     path = args[1]
   end
   if not M.running() then
@@ -75,6 +75,7 @@ M.open = function(args)
     slash = ''
   end
   local url = 'http://localhost:' .. tostring(_port) .. slash .. path
+  log('open', url)
   M.open_browser(url)
 end
 
@@ -161,7 +162,6 @@ M.run = function(args)
     on_exit = function(job_id, data, event)
       log('exit', job_id, data, event)
       vim.notify(vim.inspect(data), vim.lsp.log_levels.INFO)
-
       vim.fn.chanclose(job, 'stderr')
       vim.fn.chanclose(job, 'stdout')
     end,
@@ -181,17 +181,25 @@ end
 
 M.preview_file = function(args)
   local filename = vfn.fnamemodify(vfn.expand('%'), ':~:.')
-  if args and args[1] == '--port' then
-    port = args[2]
+  local _port
+  local check_server = true
+  for i = 1, #args do
+    if args[i] == '--port' then
+      _port = args[i + 1]
+    end
   end
-  if not M.running() then
+  if _port and _port ~= port then
+    check_server = false
+  end
+  log(filename, port, _port)
+  if not check_server and not M.running() then
     args = args or {}
     args.callback = function()
       M.open({ filename, port })
     end
     M.run(args)
   else
-    M.open({ filename, port })
+    M.open({ filename, _port })
   end
 end
 return M
