@@ -64,7 +64,7 @@ return {
   restart = browser.restart,
   stop = browser.stop,
   open = browser.open,
-  preview = browser.preview,
+  preview = browser.preview_file,
   open_url = open_browser.open_url,
   rename = rename.rename,
   repeat_rename = rename.repeat_rename,

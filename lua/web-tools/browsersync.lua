@@ -65,6 +65,9 @@ M.open = function(...)
   end
   local _port = port
   local path = '/'
+  if args[1] and type(args[1]) == 'string' and vim.fn.exists(args[1]) then
+    path = args[1]
+  end
   if not M.running() then
     vim.notify('server not started', vim.lsp.log_levels.ERROR)
   end
@@ -177,7 +180,7 @@ M.restart = function(args)
   M.run(args)
 end
 
-local function preview_file()
+M.preview_file = function()
   local delay = 500
 
   local filename = vfn.fnamemodify(vfn.expand('%'), ':~:.')
