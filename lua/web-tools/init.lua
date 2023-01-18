@@ -6,6 +6,14 @@ _WEBTOOLS_CFG = {
     repeat_rename = '.',
   },
   port = nil,
+  hurl = {
+    show_headers = false,
+    floating = true,
+    formaters = {
+      json = { 'jq' },
+      html = { 'prettier', '--parser', 'html' },
+    },
+  },
 }
 
 local browser = require('web-tools.browsersync')
@@ -34,7 +42,7 @@ local function setup(cfg)
 
   -- stylua: ignore start
   create_cmd( 'BrowserSync', function(opts) require"web-tools".run(opts.args) end, { nargs = '*' })
-  create_cmd( 'BrowserPreview', function(opts) 
+  create_cmd( 'BrowserPreview', function(opts)
     require"web-tools".preview(opts.fargs) end, { nargs = '*' })
   create_cmd( 'BrowserRestart', function(opts) require"web-tools".restart(opts.fargs) end, { nargs = '*' })
   create_cmd( 'BrowserStop', function() require"web-tools".stop() end)
@@ -56,6 +64,7 @@ local function setup(cfg)
       require('web-tools').rename()
     end, { silent = true, noremap = true, desc = 'repeat rename' })
   end
+  require('web-tools.hurl').setup()
 end
 
 return {

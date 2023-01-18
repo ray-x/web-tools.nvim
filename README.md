@@ -1,6 +1,8 @@
 # web-tools.nvim
 
-Neovim Wrapper for ❤️ [browser-sync](https://github.com/BrowserSync/browser-sync) and http/ccs LSP.
+* Neovim Wrapper for ❤️ [browser-sync](https://github.com/BrowserSync/browser-sync) 
+* http/ccs LSP.
+* hurl/curl web API testing
 View your html/css files with a live web server locally
 
 HTML & CSS tag rename, repeat rename action
@@ -57,6 +59,7 @@ require'web-tools'.setup({
 | BrowserRestart | restart browser sync                   |
 | Browserstop    | stop browser sync                      |
 | TagRename {newname}     | rename html tag                        |
+| HurlRun {args}     | Run Hurl, when in Visual mode, run selection  |
 
 Note:
 {args} is optional, if not provided, check [browser-sync](https://browsersync.io/docs/command-line) for all args options
