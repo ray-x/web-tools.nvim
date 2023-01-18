@@ -61,7 +61,12 @@ util.create_tmp_file = function(content)
   if not f then
     return
   end
-  f:write(content)
+  if type(content) == 'table' then
+    local c = vim.fn.join(content, '\n')
+    f:write(c)
+  else
+    f:write(content)
+  end
   f:close()
   return tmp_file
 end

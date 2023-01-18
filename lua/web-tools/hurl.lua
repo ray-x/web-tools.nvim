@@ -83,13 +83,13 @@ local on_output = function(code, data, event)
     end
   end
   response.raw = data
-  response.body = vim.join(data, '\r\n')
+  response.body = vim.fn.join(data, '\r\n')
   log(response)
   -- return response
 end
 
 local function format(body, ft)
-  if not ft or not body then
+  if not ft or not body or not _WEBTOOLS_CFG.hurl then
     return
   end
   local formatter = _WEBTOOLS_CFG.hurl.formatters[ft]
@@ -145,7 +145,7 @@ local show_float = function(resp)
       table.insert(data, 1, resp.headers[1])
     end
   end
-  local win, buf = textview:new({
+  local win = textview:new({
     relative = 'cursor',
     syntax = content_type,
     rect = {
@@ -157,10 +157,13 @@ local show_float = function(resp)
     enter = true,
     data = data,
   })
-  vim.api.nvim_win_set_option(win, 'wrap', true)
-  log('draw data', data)
-  vim.api.nvim_buf_set_option(buf, 'filetype', content_type)
-  return win:on_draw(data)
+  if not win then
+    log(win.buf)
+    vim.api.nvim_buf_set_option(win, 'wrap', true)
+    log('draw data', data)
+    vim.api.nvim_buf_set_option(win.buf, 'filetype', content_type)
+    return win:on_draw(data)
+  end
 end
 
 -- _WEBTOOLS_CFG = { debug = true }
@@ -232,6 +235,9 @@ local function run_selection(opts, range)
 
   table.insert(opts, fname)
   request(opts)
+  vim.defer_fn(function()
+    os.remove(fname)
+  end, 1000)
 end
 
 local function setup()

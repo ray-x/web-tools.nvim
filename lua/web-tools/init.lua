@@ -9,7 +9,7 @@ _WEBTOOLS_CFG = {
   hurl = {
     show_headers = false,
     floating = true,
-    formaters = {
+    formatters = {
       json = { 'jq' },
       html = { 'prettier', '--parser', 'html' },
     },
