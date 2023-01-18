@@ -45,6 +45,14 @@ require'web-tools'.setup({
     rename = nil,  -- by default use same setup of lspconfig
     repeat_rename = '.', -- . to repeat
   },
+  hurl = {  -- hurl default
+    show_headers = false, -- do not show http headers
+    floating = false,   -- use floating windows (need guihua.lua)
+    formatters = {  -- format the result by filetype
+      json = { 'jq' },
+      html = { 'prettier', '--parser', 'html' },
+    },
+  },
 })
 
 ```
@@ -59,7 +67,7 @@ require'web-tools'.setup({
 | BrowserRestart | restart browser sync                   |
 | Browserstop    | stop browser sync                      |
 | TagRename {newname}     | rename html tag                        |
-| HurlRun {args}     | Run Hurl, when in Visual mode, run selection  |
+| HurlRun {args}     | Run Hurl, when in Visual mode, run selected snippets  |
 
 Note:
 {args} is optional, if not provided, check [browser-sync](https://browsersync.io/docs/command-line) for all args options
