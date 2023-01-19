@@ -2,12 +2,13 @@
 
 * Neovim Wrapper for ❤️ [browser-sync](https://github.com/BrowserSync/browser-sync) 
 * http/ccs LSP.
-* hurl/curl web API testing
+* [hurl/curl](https://hurl.dev/) web API testing
 View your html/css files with a live web server locally
 
 HTML & CSS tag rename, repeat rename action
 
 https://user-images.githubusercontent.com/1681295/187396525-82a387c8-addc-4776-9a03-78da40834d45.mov
+![hurl](https://user-images.githubusercontent.com/1681295/213343683-fae07050-7e9b-45e2-a0f3-380d94105578.jpg)
 
 ## Install
 
@@ -29,6 +30,9 @@ npm install -g browser-sync
 npm i -g vscode-langservers-extracted
 
 ```
+
+### Instal hurl
+[install hurl](https://hurl.dev/docs/installation.html)
 
 ### Plug
 
