@@ -70,6 +70,7 @@ local on_output = function(code, data, event)
   for i = 2, #data do
     local line = data[i]
     if line == '' or line == nil then
+      log(i, 'change to body')
       head_state = 'body'
     elseif head_state == 'start' then
       local key, value = string.match(line, '([%w-]+):%s*(.+)')
@@ -83,9 +84,7 @@ local on_output = function(code, data, event)
     end
   end
   response.raw = data
-  response.body = vim.fn.join(data, '\r\n')
   log(response)
-  -- return response
 end
 
 local function format(body, ft)
@@ -148,6 +147,7 @@ local show_float = function(resp)
   local win = textview:new({
     relative = 'cursor',
     syntax = content_type,
+    ft = content_type,
     rect = {
       height = 40,
       width = _WEBTOOLS_CFG.floating_width or 90,
@@ -157,12 +157,19 @@ local show_float = function(resp)
     enter = true,
     data = data,
   })
+
+  -- log(win)
   if not win then
     log(win.buf)
     vim.api.nvim_buf_set_option(win, 'wrap', true)
     log('draw data', data)
-    vim.api.nvim_buf_set_option(win.buf, 'filetype', content_type)
-    return win:on_draw(data)
+    if not content_type then
+      vim.api.nvim_buf_set_option(win.buf, 'filetype', content_type)
+    end
+    -- vim.api.nvim_win_set_option(win.win, 'number', true)
+    win:on_draw(data)
+    vim.cmd('setlocal number')
+    return
   end
 end
 
@@ -172,6 +179,7 @@ end
 
 local function request(opts, callback)
   local cmd = vim.list_extend({ 'hurl', '-i', '--no-color' }, opts)
+  response = {}
 
   vim.fn.jobstart(cmd, {
     on_stdout = on_output,
