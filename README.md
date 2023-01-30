@@ -2,16 +2,21 @@
 
 * Neovim Wrapper for ❤️ [browser-sync](https://github.com/BrowserSync/browser-sync) 
 * http/ccs LSP.
-* [hurl/curl](https://hurl.dev/) web API testing
+* [Hurl/curl](https://hurl.dev/) web API testing
 
 ## Fetures
 * View your html/css files with a live web server locally
 * HTML & CSS tag rename, repeat rename action
-* Test your web API with hurl/curl
+* Test your web API with Hurl/curl
+
+### web server live view
 
 https://user-images.githubusercontent.com/1681295/187396525-82a387c8-addc-4776-9a03-78da40834d45.mov
 
-![hurl](https://user-images.githubusercontent.com/1681295/213343683-fae07050-7e9b-45e2-a0f3-380d94105578.jpg)
+
+### Test web API with Hurl
+
+![Hurl](https://user-images.githubusercontent.com/1681295/213343683-fae07050-7e9b-45e2-a0f3-380d94105578.jpg)
 
 ## Install
 
