@@ -34,7 +34,7 @@ local function open_cmd()
   elseif executable('open') == 1 then
     cmd = ':silent !open'
   else
-    vim.notify(' platform not supported: ' .. util.os, vim.lsp.log_levels.ERROR)
+    vim.notify(' platform not supported: ' .. util.os, vim.log.levels.ERROR)
   end
   return cmd
 end

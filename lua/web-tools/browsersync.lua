@@ -68,7 +68,7 @@ M.open = function(args)
     path = args[1]
   end
   if not M.running() then
-    vim.notify('server not started', vim.lsp.log_levels.ERROR)
+    vim.notify('server not started', vim.log.levels.ERROR)
   end
   local slash = '/'
   if path == '/' then
@@ -87,7 +87,7 @@ M.run = function(args)
   if vim.fn.executable('browser-sync') == 0 then
     return vim.notify(
       'browser-sync not found please install with npm install -g browser-sync',
-      vim.lsp.log_levels.ERROR
+      vim.log.levels.ERROR
     )
   end
   local opts = { 'browser-sync', 'start', '--server', '--watch', '--no-open' }
@@ -157,11 +157,11 @@ M.run = function(args)
         return
       end
       log(job_id, data, event)
-      vim.notify(vim.inspect(data) .. ' from stderr', vim.lsp.log_levels.ERROR)
+      vim.notify(vim.inspect(data) .. ' from stderr', vim.log.levels.ERROR)
     end,
     on_exit = function(job_id, data, event)
       log('exit', job_id, data, event)
-      vim.notify(vim.inspect(data), vim.lsp.log_levels.INFO)
+      vim.notify(vim.inspect(data), vim.log.levels.INFO)
       vim.fn.chanclose(job, 'stderr')
       vim.fn.chanclose(job, 'stdout')
     end,
