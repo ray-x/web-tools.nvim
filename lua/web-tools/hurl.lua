@@ -188,7 +188,12 @@ local function request(opts, callback)
       log('exit', i, code)
       if code ~= 0 then
         vim.notify(
-          string.format('hurl: %s error exit_code=%s response=%s', vim.inspect(cmd), code, vim.inspect(response))
+          string.format(
+            'hurl: %s error exit_code=%s response=%s',
+            vim.inspect(cmd),
+            code,
+            vim.inspect(response)
+          )
         )
       end
 
@@ -232,6 +237,46 @@ local function run_current_file(opts)
   request(opts)
 end
 
+function trimr(s)
+  return (string.gsub(s, '^(%s*.-)%s*$', '%1'))
+end
+
+local function curl_to_hurl(args, range)
+  local start = 1
+  local endl = vim.fn.line('$')
+
+  if range then
+    start = vim.fn.getpos("'<")[2]
+    endl = vim.fn.getpos("'>")[2]
+  end
+
+  local line = vim.fn.getline(start)
+  line = vim.fn.substitute(line, [[curl .\+ \(\w\+\) ['"]\(.\+\)['"]\( \\\)*]], '\\1 \\2', 'g')
+
+  line = trimr(line)
+  vim.fn.setline(1, line)
+
+  local lines = vim.fn.getline(start + 1, endl)
+  local json = false
+  for i, l in ipairs(lines) do
+    line = trimr(l)
+    i = i + 1
+    if line:find('--header') then
+      line = vim.fn.substitute(line, [[--header ['"]\(.\+\):\(.\+\)['"]\( \\\)*]], '\\1:\\2', 'g')
+      vim.fn.setline(i, line)
+    end
+    if line:find('--data') then
+      vim.fn.setline(i, '{')
+      json = true
+    elseif line:find("}'") then
+      vim.fn.setline(i, '}')
+      json = false
+    elseif json then
+      vim.fn.setline(i, line)
+    end
+  end
+end
+
 local function run_selection(opts, range)
   opts = opts or {}
   local lines = util.get_visual_selection()
@@ -256,6 +301,14 @@ local function setup()
       require('web-tools.hurl').run_current_file(opts.fargs)
     end
   end, { nargs = '*', range = true })
+
+  util.create_cmd('CurlToHurl', function(opts)
+    if opts.range ~= 0 then
+      require('web-tools.hurl').curl_to_hurl(opts.fargs, opts.range or true)
+    else
+      require('web-tools.hurl').curl_to_hurl(opts.fargs)
+    end
+  end, { nargs = '*', range = true })
 end
 
 return {
@@ -264,5 +317,6 @@ return {
   run_current_file = run_current_file,
   run_selection = run_selection,
   run_file = run_file,
+  curl_to_hurl = curl_to_hurl,
   setup = setup,
 }
