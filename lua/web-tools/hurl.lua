@@ -249,12 +249,18 @@ local function curl_to_hurl(args, range)
     start = vim.fn.getpos("'<")[2]
     endl = vim.fn.getpos("'>")[2]
   end
+  local alt_file
+  if not args.bang then
+    alt_file = vim.fn.expand('%:r') .. '.hurl'
+  end
 
   local line = vim.fn.getline(start)
   line = vim.fn.substitute(line, [[curl .\+ \(\w\+\) ['"]\(.\+\)['"]\( \\\)*]], '\\1 \\2', 'g')
 
+  local write = {}
   line = trimr(line)
-  vim.fn.setline(1, line)
+  write[#write + 1] = line
+  -- vim.fn.setline(1, line)
 
   local lines = vim.fn.getline(start + 1, endl)
   local json = false
@@ -263,16 +269,25 @@ local function curl_to_hurl(args, range)
     i = i + 1
     if line:find('--header') then
       line = vim.fn.substitute(line, [[--header ['"]\(.\+\):\(.\+\)['"]\( \\\)*]], '\\1:\\2', 'g')
-      vim.fn.setline(i, line)
+      -- vim.fn.setline(i, line)
+      write[#write + 1] = line
     end
     if line:find('--data') then
-      vim.fn.setline(i, '{')
+      write[#write + 1] = '{'
       json = true
     elseif line:find("}'") then
-      vim.fn.setline(i, '}')
+      write[#write + 1] = '}'
       json = false
     elseif json then
-      vim.fn.setline(i, line)
+      write[#write + 1] = line
+    end
+  end
+  if alt_file then
+    vim.fn.writefile(write, alt_file, 'a')
+    vim.cmd('edit ' .. alt_file)
+  else
+    for i, l in ipairs(write) do
+      vim.fn.setline(start + i - 1, l)
     end
   end
 end
@@ -304,11 +319,11 @@ local function setup()
 
   util.create_cmd('CurlToHurl', function(opts)
     if opts.range ~= 0 then
-      require('web-tools.hurl').curl_to_hurl(opts.fargs, opts.range or true)
+      require('web-tools.hurl').curl_to_hurl(opts, opts.range or true)
     else
-      require('web-tools.hurl').curl_to_hurl(opts.fargs)
+      require('web-tools.hurl').curl_to_hurl(opts)
     end
-  end, { nargs = '*', range = true })
+  end, { nargs = '*', range = true, bang = true })
 end
 
 return {
