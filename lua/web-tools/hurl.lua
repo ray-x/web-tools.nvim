@@ -107,7 +107,8 @@ end
 
 local show_float = function(resp)
   local data = resp.raw or resp.body
-  if #data == 0 then
+  local headers = resp.headers or {}
+  if #data == 0 and #headers == 0 then
     return
   end
   local has_guihua, textview = pcall(require, 'guihua.textview')
@@ -126,7 +127,7 @@ local show_float = function(resp)
   local content_type = nil
 
   -- get content type
-  for header, val in pairs(resp.headers) do
+  for header, val in pairs(headers) do
     if string.lower(header):find('^content%-type') then
       content_type = val:match('application/(%l+)') or val:match('text/(%l+)')
       break
@@ -140,9 +141,22 @@ local show_float = function(resp)
 
   if not _WEBTOOLS_CFG.hurl.show_headers then
     data = d
-    if resp.headers[1] then
-      table.insert(data, 1, resp.headers[1])
+    if resp.headers['status'] then
+      table.insert(data, 1, resp.headers['status'])
+      table.insert(data, 2, '\r')
     end
+  else
+    data = {}
+    if resp.headers['status'] then
+      table.insert(data, 1, 'status: ' .. resp.headers['status'])
+    end
+    for k, v in pairs(resp.headers) do
+      if k ~= 'status' then
+        table.insert(data, #data + 1, k .. ': ' .. v)
+      end
+    end
+    table.insert(data, #data + 1, '\r')
+    vim.list_extend(data, d)
   end
   local win = textview:new({
     relative = 'cursor',
