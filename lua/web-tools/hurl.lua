@@ -27,6 +27,7 @@ cf-ray: 78b573069f9aa979-SYD
 local testdata = {
   'HTTP/2 200',
   'date: Wed, 18 Jan 2023 09:08:10 GMT',
+  'content-type: application/json; charset=utf-8',
   'accept-ranges: bytes',
   'cf-ray: 78b62f3f1d116a48-SYD',
   '',
@@ -89,10 +90,11 @@ end
 
 local function format(body, ft)
   if not ft or not body or not _WEBTOOLS_CFG.hurl then
+    log('empty body ' .. (ft or ''))
     return
   end
   local formatter = _WEBTOOLS_CFG.hurl.formatters[ft]
-  if not formatter then
+  if vim.fn.empty(formatter) == 1 or vim.fn.executable(formatter[1]) ~= 1 then
     log('formatter not setup for ' .. (ft or ''))
     return
   end
@@ -100,7 +102,7 @@ local function format(body, ft)
   local stdout = vim.fn.systemlist(formatter, body)
   if vim.v.shell_error ~= 0 then
     log('formatter failed' .. tostring(vim.v.shell_error))
-    return
+    return body
   end
   return stdout
 end
@@ -109,11 +111,12 @@ local show_float = function(resp)
   local data = resp.raw or resp.body
   local headers = resp.headers or {}
   if #data == 0 and #headers == 0 then
+    log('no data')
     return
   end
   local has_guihua, textview = pcall(require, 'guihua.textview')
   if not has_guihua then
-    util.log('Failed to load guihua.textview')
+    log('Failed to load guihua.textview')
 
     log(data)
     vim.fn.setloclist(0, {}, ' ', {
@@ -136,17 +139,11 @@ local show_float = function(resp)
 
   local d = format(resp.body, content_type)
   if not d then
+    log('no formatter for ' .. (content_type or ''))
     d = resp.raw or { resp.body }
   end
-
-  if not _WEBTOOLS_CFG.hurl.show_headers then
-    data = d
-    if resp.headers['status'] then
-      table.insert(data, 1, resp.headers['status'])
-      table.insert(data, 2, '\r')
-    end
-  else
-    data = {}
+  data = {}
+  if _WEBTOOLS_CFG.hurl.show_headers then
     if resp.headers['status'] then
       table.insert(data, 1, 'status: ' .. resp.headers['status'])
     end
@@ -155,8 +152,11 @@ local show_float = function(resp)
         table.insert(data, #data + 1, k .. ': ' .. v)
       end
     end
-    table.insert(data, #data + 1, '\r')
-    vim.list_extend(data, d)
+    table.insert(data, #data + 1, '')
+  end
+  vim.list_extend(data, d)
+  if content_type == 'json' and _WEBTOOLS_CFG.hurl.json5 then
+    content_type = 'json5'
   end
   local win = textview:new({
     relative = 'cursor',
@@ -170,6 +170,7 @@ local show_float = function(resp)
     },
     enter = true,
     data = data,
+    title = 'hurl response ' .. resp.headers['status'],
   })
 
   -- log(win)
@@ -187,7 +188,10 @@ local show_float = function(resp)
   end
 end
 
--- _WEBTOOLS_CFG = { debug = true }
+-- _WEBTOOLS_CFG = {
+--   debug = true,
+--   hurl = { floating = true, formatters = { json = { 'jq' }, html = { 'prettier' } } },
+-- }
 -- on_output(200, testdata, 'stdout')
 -- show_float(response)
 

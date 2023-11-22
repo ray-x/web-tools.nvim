@@ -1,6 +1,6 @@
 # web-tools.nvim
 
-* Neovim Wrapper for ❤️ [browser-sync](https://github.com/BrowserSync/browser-sync) 
+* Neovim Wrapper for ❤️ [browser-sync](https://github.com/BrowserSync/browser-sync)
 * http/ccs LSP.
 * [Hurl/curl](https://hurl.dev/) web API testing
 
@@ -42,6 +42,13 @@ npm i -g vscode-langservers-extracted
 ### Instal hurl
 [install hurl](https://hurl.dev/docs/installation.html)
 
+### Other depencies
+
+Not required, but recommended
+- [prettier](https://prettier.io/) for html/css format
+- [jq](https://stedolan.github.io/jq/) for json format
+- Treesitter for [json5](https://json5.org/) better json support
+
 ### Plug
 
 ```vim
@@ -60,6 +67,7 @@ require'web-tools'.setup({
   hurl = {  -- hurl default
     show_headers = false, -- do not show http headers
     floating = false,   -- use floating windows (need guihua.lua)
+    json5 = false,      -- use json5 parser require json5 treesitter
     formatters = {  -- format the result by filetype
       json = { 'jq' },
       html = { 'prettier', '--parser', 'html' },
