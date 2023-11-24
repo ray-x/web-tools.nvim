@@ -41,6 +41,8 @@ local log = util.log
 
 vim = vim or {}
 local response = {}
+local tmpfile
+local uv = vim.uv or vim.loop
 
 local on_output = function(code, data, event)
   local head_state
@@ -60,7 +62,39 @@ local on_output = function(code, data, event)
     response.headers = {}
     return
   end
-  -- local headers = P.readlines(dump_path)
+  if not tmpfile then
+    tmpfile = vim.fn.tempname()
+  end
+  -- we put all data to tmp file
+  local fd = uv.fs_open(tmpfile, 'a', 438)
+  for _, line in ipairs(data) do
+    uv.fs_write(fd, line .. '\n', -1)
+  end
+  uv.fs_close(fd)
+  log('write to tmpfile', tmpfile)
+end
+local function proccess_output()
+  log('proccess_output', tmpfile)
+  local fd = uv.fs_open(tmpfile, 'r', 438)
+  if not fd then
+    log('no tmpfile')
+    return
+  end
+  local data_str = ''
+  -- read all data line by line, seperated by \n
+  while true do
+    local line = uv.fs_read(fd, 1024, -1)
+    -- log('read', line, i, type(line))
+    if vim.fn.empty(line) == 1 then
+      break
+    end
+    log(line)
+    data_str = data_str .. line
+  end
+  uv.fs_close(fd)
+  -- split data_str by \n
+  local data = vim.split(data_str, '\n')
+
   local status = tonumber(string.match(data[1], '([%w+]%d+)'))
   head_state = 'start'
   if status then
@@ -85,7 +119,10 @@ local on_output = function(code, data, event)
     end
   end
   response.raw = data
-  log(response)
+  -- log(response)
+  -- delete tmp file
+  os.remove(tmpfile)
+  tmpfile = nil
 end
 
 local function format(body, ft)
@@ -110,7 +147,7 @@ end
 local show_float = function(resp)
   local data = resp.raw or resp.body
   local headers = resp.headers or {}
-  if #data == 0 and #headers == 0 then
+  if vim.fn.empty(data) == 1 and #headers == 0 then
     log('no data')
     return
   end
@@ -170,7 +207,7 @@ local show_float = function(resp)
     },
     enter = true,
     data = data,
-    title = 'hurl response ' .. resp.headers['status'],
+    title = 'hurl response ' .. (resp.headers['status'] or ''),
   })
 
   -- log(win)
@@ -193,11 +230,13 @@ end
 --   hurl = { floating = true, formatters = { json = { 'jq' }, html = { 'prettier' } } },
 -- }
 -- on_output(200, testdata, 'stdout')
+-- proccess_output()
 -- show_float(response)
 
 local function request(opts, callback)
   local cmd = vim.list_extend({ 'hurl', '-i', '--no-color' }, opts)
   response = {}
+  tmpfile = vim.fn.tempname()
 
   vim.fn.jobstart(cmd, {
     on_stdout = on_output,
@@ -214,8 +253,9 @@ local function request(opts, callback)
           )
         )
       end
-
+      proccess_output()
       log(response)
+
       if callback then
         return callback(response)
       else
@@ -235,6 +275,9 @@ local function request(opts, callback)
           vim.cmd('copen')
         end
       end
+      response.raw = nil
+      response.body = nil
+      response = {} -- release
     end,
   })
 end
@@ -313,8 +356,8 @@ end
 local function run_selection(opts, range)
   opts = opts or {}
   local lines = util.get_visual_selection()
-  log(range)
   if not lines then
+    log('nothing selected', range)
     return
   end
   local fname = util.create_tmp_file(lines)
