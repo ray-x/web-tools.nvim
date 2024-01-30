@@ -79,15 +79,15 @@ require'web-tools'.setup({
 
 ## Commands
 
-| command        | Description                            |
-| -------------- | -------------------------------------- |
-| BrowserSync {args}    | run browser-sync server with args               |
-| BrowserOpen {args}    | open browser-sync, if browser-sync is not start, start it with args|
-| BrowserPreview {-f --port 3000}| preview current file with browser sync |
-| BrowserRestart | restart browser sync                   |
-| Browserstop    | stop browser sync                      |
-| TagRename {newname}     | rename html tag                        |
-| HurlRun {args}     | Run Hurl, when in Visual mode, run selected snippets  |
+| command                         | Description                            |
+|---------------------------------| -------------------------------------- |
+| BrowserSync {args}              | run browser-sync server with args               |
+| BrowserOpen {args}              | open browser-sync, if browser-sync is not start, start it with args|
+| BrowserPreview {-f --port 3000} | preview current file with browser sync |
+| BrowserRestart                  | restart browser sync                   |
+| BrowserStop                     | stop browser sync                      |
+| TagRename {newname}             | rename html tag                        |
+| HurlRun {args}                  | Run Hurl, when in Visual mode, run selected snippets  |
 
 Note:
 {args} is optional, if not provided, check [browser-sync](https://browsersync.io/docs/command-line) for all args options
