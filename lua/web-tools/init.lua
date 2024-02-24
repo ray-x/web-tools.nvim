@@ -55,7 +55,7 @@ local function setup(cfg)
   if vim.fn.empty(repeat_key) == 0 then
     vim.keymap.set('n', repeat_key, function()
       require('web-tools').repeat_rename()
-    end, { silent = true, noremap = true, desc = 'webtool renmae' })
+    end, { silent = true, noremap = true, desc = 'webtool rename' })
   end
 
   local rename_key = _WEBTOOLS_CFG.keymaps.rename
