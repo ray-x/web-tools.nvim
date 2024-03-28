@@ -1,7 +1,8 @@
 local util = {}
 
 local os_name = vim.loop.os_uname().sysname
-local is_windows = os_name == 'Windows' or os_name == 'Windows_NT'
+local is_windows = os_name == 'Windows' or os_name == 'Windows_NT' or os_name:find('^MINGW') ~= nil
+local is_linux = os_name == 'Linux'
 
 function util.sep()
   if is_windows then
@@ -16,6 +17,10 @@ end
 
 function util.is_windows()
   return is_windows
+end
+
+function util.is_linux()
+  return is_linux
 end
 
 util.handle_job_data = function(data)
