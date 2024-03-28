@@ -102,6 +102,7 @@ local function proccess_output()
     response.headers = { status = data[1] }
     response.headers_str = data[1] .. '\r\n'
   end
+  local head_state
   for i = 2, #data do
     local line = data[i]
     if line == '' or line == nil then

@@ -30,7 +30,7 @@ local function open_cmd()
   elseif has('win32') ~= 0 or has('win32unix') ~= 0 then
     cmd = ':silent !start'
   elseif executable('xdg-open') == 1 then
-    cmd = ':silent !xdg-open'
+    cmd = 'xdg-open' -- issue #10
   elseif executable('open') == 1 then
     cmd = ':silent !open'
   else
@@ -48,10 +48,15 @@ local function open_url(url)
     url = 'http://' .. url
   end
   if url then
+    url = vfn.escape(url, '#%!')
     if util.is_windows() then
-      cmd = cmd .. ' ' .. vfn.escape(url, '#%!')
+      cmd = cmd .. ' ' .. url
+    -- linux
+    elseif util.is_linux() then
+      cmd = cmd .. ' ' .. url
+      return vim.fn.jobstart(cmd)
     else
-      cmd = cmd .. ' "' .. vfn.escape(url, '#%!') .. '"'
+      cmd = cmd .. ' "' .. url .. '"'
     end
     log(cmd)
     vim.cmd(cmd)

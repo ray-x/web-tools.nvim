@@ -65,6 +65,7 @@ local function setup(cfg)
     end, { silent = true, noremap = true, desc = 'repeat rename' })
   end
   require('web-tools.hurl').setup()
+  require('web-tools.commands').setup()
 end
 
 return {
@@ -74,7 +75,6 @@ return {
   stop = browser.stop,
   open = browser.open,
   preview = browser.preview_file,
-  open_url = open_browser.open_url,
   rename = rename.rename,
   repeat_rename = rename.repeat_rename,
   setup = setup,
