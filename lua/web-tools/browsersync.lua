@@ -66,6 +66,7 @@ M.open = function(args)
   local path = '/'
   if (args[1] and type(args[1]) == 'string') and (args[1] == '/' or vim.fn.filereadable(args[1])) == 1 then
     path = args[1]
+	path = path:gsub(' ', '%%20')
   end
   if not M.running() then
     vim.notify('server not started', vim.log.levels.ERROR)
