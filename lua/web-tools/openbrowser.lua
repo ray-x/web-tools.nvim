@@ -49,18 +49,7 @@ local function open_url(url)
   end
   if url then
     url = vfn.escape(url, '#%!')
-    if util.is_windows() then
-      cmd = cmd .. ' ' .. url
-    -- linux
-    elseif util.is_linux() then
-      cmd = cmd .. ' ' .. url
-      return vim.fn.jobstart(cmd)
-    else
-      cmd = cmd .. ' "' .. url .. '"'
-    end
-    log(cmd)
-    vim.cmd(cmd)
-    return
+    return vim.ui.open(url)
   end
 
   -- asciidoc URL http://github.com[queries]
@@ -81,7 +70,6 @@ local function open_url(url)
     if m > 0 then
       -- print(getline('.'):sub(col('.') - 1, -1))
       url = matchstr(getline('.'), [[href=["'."'".']\?\zs\S\{-}\ze["'."'".']\?/\?>]])
-      print(url)
     end
     winrestview(save_view)
   end
@@ -93,7 +81,6 @@ local function open_url(url)
   if empty(url) == 1 then
     return
   end
-  print(cmd)
   cmd = cmd .. ' "' .. vfn.escape(url, '#%!') .. '"'
   print('cmd', cmd)
   vim.cmd(cmd)
