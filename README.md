@@ -1,11 +1,11 @@
 # web-tools.nvim
 
 - Neovim Wrapper for ❤️ [browser-sync](https://github.com/BrowserSync/browser-sync)
-- http/ccs LSP.
+- http/css LSP.
 - [Hurl/curl](https://hurl.dev/) web API testing
 - npm/yarn/pnpm/npx/node wrapper
 
-## Fetures
+## Features
 
 - View your html/css files with a live web server locally
 - HTML & CSS tag rename, repeat rename action
@@ -23,7 +23,7 @@ https://user-images.githubusercontent.com/1681295/187396525-82a387c8-addc-4776-9
 ## Install
 
 - require
-  - neovim 0.7+
+  - neovim 0.9+
   - browser-sync
   - optional: lspconfig & vscode-langservers-extracted
 
@@ -32,7 +32,7 @@ https://user-images.githubusercontent.com/1681295/187396525-82a387c8-addc-4776-9
 ```shell
 npm install -g browser-sync
 ```
-or withing neovim run `:Npm install -g browser-sync`
+or within neovim run `:Npm install -g browser-sync`
 
 ### LSP for html & cssls
 
@@ -42,11 +42,11 @@ npm i -g vscode-langservers-extracted
 
 or within neovim run `:Npm install -g vscode-langservers-extracted`
 
-### Instal hurl
+### Install hurl
 
 [install hurl](https://hurl.dev/docs/installation.html)
 
-### Other depencies
+### Other dependencies
 
 Not required, but recommended
 
